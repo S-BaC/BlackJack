@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script defer src="app.js"></script>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <!-- Notes in the app.js file -->
+    <div class="header">
+        <p class="title">BLACKJACK</p>
+        <P>"The greatest risk is not taking one."</P>
+    </div>
+    <div id="setting">
+        <div> <span id="cashText">100</span> mil.</div>
+        <img src="dollar.png" width="30px"/>
+    </div>
+    <div class="welcomePage">
+        <button class="startBtn" onclick="start()">
+            START
+        </button>
+    </div>
+    <div class="gamePage">
+        <div class="compCards">
+            <img src="" alt="" id="comp1"/>
+            <img src="" alt="" id="comp2"/>
+            <img src="" alt="" id="comp3"/>
+            <img src="" alt="" id="comp4"/>
+            <img src="" alt="" id="comp5"/>
+        </div>
+        <div class="headerAboveCards">
+            <h2>Welcome!</h2>
+            <p>Place your bet.</p>
+        </div>
+        <img id="deckOfCards" src="cardBack01.png" width="60px"/>
+        <div id="potContainer">
+            <div id="pot">0</div>
+        </div>
+        <div class="betContainer">
+            <div id="rangeInput">
+                <input type="range" id="betBar" min="1" max = "100" value="50" onchange="showVal(this.value)"/>
+            </div>
+            <!-- This line is here range input will be injected. -->
+            <div ><span id="betValue">50</span> mil.</div>
+            <button id="betConfirm" onclick="confirmBet()">Confirm</button>
+        </div>
+        
+        <div class="playerCards">
+            <img src="" alt="" id="player1"/>
+            <img src="" alt="" id="player2"/>
+            <img src="" alt="" id="player3"/>
+            <img src="" alt="" id="player4"/>
+            <img src="" alt="" id="player5"/>
+        </div>
+
+        <div class="btnContainer">
+            <button id="hitBtn" class="btn" onclick="hit()">
+                Hit
+            </button>
+            <button id="standBtn" class="btn" onclick="stand()">
+                Stand
+            </button>
+        </div>
+    </div>
+    <div class="resultPage">
+        <!-- Wrraper for Win/Lose -->
+        <div class = "win result">
+            <div> CONGRATULATIONS! </div>
+            <img class ='rImage' src ="trophy.png">
+            <button class="restart" onclick="location.reload()">Once More!</button>
+        </div>
+
+        <div class="lose result">
+            <div> Oops, maybe next time~ </div>
+            <img class ='rImage' src ="loseSign.png" >
+            <button class="restart" onclick="location.reload()">Again.</button>
+        </div>
+
+        <div class = "draw result">
+            <div> Undecisive! Maybe once more? </div>
+            <img class ='rImage' src="drawSign.png">
+            <button class="restart" onclick="location.reload()">Bring it on!</button>
+        </div>
+    </div>
+        
+
+    
+
+</body>
+</html>

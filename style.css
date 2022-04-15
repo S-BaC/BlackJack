@@ -1,0 +1,157 @@
+/*0.Header & Setting*/
+*{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+body{
+    width: 100%;
+    margin:0;
+}
+img{
+    border-radius: 10%;
+}
+
+.header{
+    font-size: 2vh;
+    line-height: 2px;
+    color:beige;
+    background-color: #333;   
+    padding:1%; 
+    text-align: center;
+}
+.title{
+    font-size:3em;
+}
+#setting{
+    display:flex;
+    gap:10px;
+    align-items: center;
+    background-color: rgba(128, 128, 128, 0.267);
+    padding:5px;
+    padding-left:10px;
+    position:absolute;
+    bottom:5px;
+    right:5px;
+}
+/*1.Welcome Page*/
+/*FOL: place the button at the center of the whole screen*/
+.welcomePage{
+    width:100%;
+    display: flex;
+    justify-content: center;
+    padding-top:100px;
+
+}
+.startBtn{
+    width:150px;
+    height:50px;
+    border:none;
+    background-color: #D69215;
+    color:beige;
+    font-size: 30px;
+    box-shadow: 1px 1px 5px #111;
+}
+#setting:hover{
+    cursor:pointer;
+}
+/*2.Game Page*/
+.gamePage{
+    display:block;
+    text-align: center;
+    font-size: 1.2em;
+    margin-top:20px;
+    display:none;
+
+}
+#deckOfCards{
+    margin-top:30px;
+    box-shadow: 2px 3px 3px #555;
+    transform: rotate(90deg);
+}
+
+#potContainer{
+    width:10%;
+    background-color: #D69215;
+    margin-left:auto;
+    margin-bottom: 10px;
+    padding:5px;
+    color:white;
+}
+.betContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+}
+#betBar{
+    accent-color:#D69215;
+}
+#betConfirm{
+    border:none;
+    background-color: rgb(202, 176, 30);
+    color:white;
+    height:30px;
+    padding:5px;
+    box-shadow: 1px 1px 3px gray;
+}
+/*Dealing*/
+#player1, #player2, #player3, #player4, #player5,
+#comp1, #comp2, #comp3, #comp4, #comp5{
+    display:none;
+    width:60px;
+    box-shadow: 0px 1px 3px gray;
+}
+
+.playerCards, .compCards{
+    display:flex;
+    width:100%;
+    justify-content: center;
+    gap:10px;
+    margin:auto;
+}
+.btnContainer{
+    margin-top:20px;
+    display:flex;
+    gap:20px;
+    justify-content: center;
+}
+.btn{
+    display:none;
+    font-weight: bold;
+    border:none;
+    color:white;
+    height:30px;
+    width: 60px;
+    padding:5px;
+    box-shadow: 1px 1px 3px gray;
+}
+#hitBtn{
+    background-color: #E0D616;
+}
+#standBtn{
+    background-color:#B4D615;
+}
+
+/*WinLoseDraw*/
+.result{
+    display:none;
+    text-align: center;
+    margin-top:100px;
+}
+
+.rImage{
+    margin:30px;
+    height:200px;
+}
+.restart{
+    display:block;
+    margin:auto;
+    font-weight: bold;
+    border:none;
+    background-color:#D69215;
+    color:white;
+    height:30px;
+    width: auto;
+    padding-left:15px;
+    padding-right:15px;
+    box-shadow: 1px 1px 3px gray;
+}
