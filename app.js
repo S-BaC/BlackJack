@@ -145,9 +145,6 @@ function hit(){
     dealAndShow('player',pCCount,0);
     if(pCCount === 5){
         hitBtn.style = 'disable';
-        if(checkValue(pCards)<22){
-            setTimeOut(()=>playerWin(),2000);
-        }
     }
     if(checkValue(pCards)>14 || pCCount === 5){
         standBtn.style.display='block';
@@ -187,6 +184,8 @@ function result(){
     //Conditions:
     if(cCCount ===5 && compValue < 22){
         compWin();
+    }else if(pCCount === 5 && playerValue < 22){
+        playerWin();
     }else if(playerValue>21 && compValue < 22){
         compWin();
     }else if(compValue >21 && playerValue<22){
