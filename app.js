@@ -2,271 +2,365 @@
 NOTES
     - Description:
         Classic Blackjack game with options for "betting".
+    - Code Overview:
+        Section A for variable declaration.
+        Section B for helper functions and classes.
+        Section C for what the user is expected to go through.
     - Timeline:
-        Started on 2022 Apr 15 11:00. Finished v1 on 21:45, after 5~7 hours of coding.
-        Code is very much not clean and may also contain bugs, but the game works.
-        Hope to clean the code and add more features later.
+        v1.0:   Started on 2022 Apr 15 11:00. Finished a working version at 21:45, after 5~7 hours of coding.
+                Code is very much not clean and may also contain bugs, but the game works.
+                Hope to clean the code and add more features later.
+        v1.1:   Cleaning the code: started on 2022 Apr 17 21:30. Finished with a much cleaner (I guess) code at 0:05.
+        v1.2:   Added the reset feature. Took around 30 minutes.
+    
 */
 
-//Show player's cash.
-//Animate card dealing.
+/* SECTION A. Declaring Variables */
 
-//Document Objects
+// 1    Document Objects & Related Variables
+// 1.1  Pages
 const welcomePg = document.querySelector('.welcomePage');
 const gamePg = document.querySelector('.gamePage');
-const resultPage = document.querySelector('.result');
+const resultPg = document.querySelector('.resultPage');
+const header = document.querySelector('.headerAboveCards');
+
+// 1.2  Betting
 const betAmt = document.querySelector('#betBar');
 const betContainer = document.querySelector('.betContainer');
 const betValue = document.querySelector('#betValue');
 const rangeInput = document.querySelector('#rangeInput');
 const pot = document.querySelector('#pot');
-const header = document.querySelector('.headerAboveCards');
+let bet = 0;
+
+// 1.3  Hit/Stand Buttons
 const btns = document.querySelectorAll('.btn');
 const hitBtn = document.querySelector('#hitBtn');
 const standBtn = document.querySelector('#standBtn');
 
+// 1.4 Cash
 const cashTxt = document.querySelector('#cashText');
+let cash = 100;
+/*      -----------------------------------------------------    */
 
+// 2.       Cards
+// 2.1      DOM-related Cards
+// 2.1.1    For Player
 let cP1 = document.querySelector('#player1');
 let cP2 = document.querySelector('#player2');
 let cP3 = document.querySelector('#player3');
 let cP4 = document.querySelector('#player4');
 let cP5 = document.querySelector('#player5');
-const pCardsDisplay = [cP1, cP2, cP3, cP4, cP5];
+let pCardsDisplay = [cP1, cP2, cP3, cP4, cP5];
+const cPlayer = document.querySelector('.playerCards');
 
+// 2.2.2    For Comp
 let cC1 = document.querySelector('#comp1');
 let cC2 = document.querySelector('#comp2');
 let cC3 = document.querySelector('#comp3');
 let cC4 = document.querySelector('#comp4');
 let cC5 = document.querySelector('#comp5');
-const cCardsDisplay = [cC1, cC2, cC3, cC4, cC5];
-
+let cCardsDisplay = [cC1, cC2, cC3, cC4, cC5];
 const cComp = document.querySelector('.compCards');
-const cPlayer = document.querySelector('.playerCards');
 
-//Bet & Values
-let bet = 0;
-let cash = 100;
-
-//Deck Arrays
+// 2.2      Script-related Cards
+// 2.2.1    Arrays For The Deck
 let deckT = ['spades', 'hearts', 'diamonds', 'clubs'];
 let deck = [];
+
+// 2.2.2    Player's Hand
 let pCards = [];
-let cCards = [];
-
-//cardNumbers and values;
 let pCCount = 0;
-let cCCount = 0;
 let playerValue = 0;
-let compValue = 0;
 
-let threeCardFlag;
-//Populating the deck
-let dIndex=0;
-function cardBuilder(){
-    for(let i=1; i<14; i++){
-        for(let j=0; j<4; j++){
-            cardPopulator(i,j);
+// 2.2.3    Comp's Hand
+let cCards = [];
+let cCCount = 0;
+let compValue = 0;
+/*      -----------------------------------------------------    */
+
+// 3.   Other Misc. Variables
+let threeCardFlag;          // To help rule out the possibility of ${"A-9-K"} counting wrong.
+let standBtnFlag = false;   // To help reduce work for checking whether or not to display StandBtn.
+let dealObj = [];           // To save Deal objects (well, I don't know how to work with a single instance yet, so...)
+let dealingCards1; // Same as above.
+let dealingCards2; 
+let dealingCards3; 
+let dealingCards4; 
+let dealingCards5;
+/*      -----------------------------------------------------    */
+/*      -----------------------------------------------------    */
+
+/* SECTION B. Setting Up The Program */
+
+// 1.   Creating the Deck
+class Deck {
+    //Constructor and starts the processes.
+    constructor() {
+        this.dIndex = 0;
+        this.cardBuilder();
+    }
+    //Adds cards to the deck by loopint through 13 cards of 4 types (A-K, SHDC).
+    cardBuilder() {
+        for (let i = 1; i < 14; i++) {
+            for (let j = 0; j < 4; j++) {
+                this.cardPopulator(i, j);
+            }
         }
     }
-}
-function cardPopulator(number, type){
-    deck[dIndex] = {
-        cNumber: number,
-        cType: deckT[type],
-        cImg: `deck/${number}_of_${deckT[type]}.png`
-    };
-    dIndex++;
-}
-
-
-//Resets
-//In development
-// function reset(){
-//     resultPage.style.display='none';
-//     gamePg.style.display = 'block';
-//     deck = [];
-//     pCards = [];
-//     cCards = [];
-//     bet = 0;
-//     //cardNumbers and values;
-//     pCCount = 0;
-//     cCCount = 0;
-//     playerValue = 0;
-//     compValue = 0;
-//     dIndex=0;
-//     cardBuilder();
-// }
-
-//Starts the game
-function start(){
-    welcomePg.style.display = 'none';
-    gamePg.style.display = 'block';
-    cardBuilder();
-    // rangeInput.innerHTML = `<input type="range" id="betBar" min="1" max = "${cash}" onchange="showVal(this.val)"/>`;
-    // betValue.innerHTML = betAmt.value;
-    //test code
-}
-
-function showVal(val){
-    betValue.innerHTML = betAmt.value;
-}
-
-function confirmBet(){
-    bet = betAmt.value;
-    cash-=bet;
-    betContainer.style.display='none';
-    pot.textContent = bet*2;
-    cashTxt.textContent = cash;
-    dealCards();
-}
-
-function dealCards(){
-    // Header part
-    header.innerHTML = "<h2> GET READY ... </h2>";
-    setTimeout(()=>{
-        header.style.display = 'none';
-    },2000);
-
-    //Dealing cards (initial)
-    dealAndShow('player', pCCount,1);
-    dealAndShow('comp', cCCount,1);
-    dealAndShow('player', pCCount,1);
-    dealAndShow('comp',cCCount,1);
-
-    //Displaying Buttons. (StandBtn will display only when playerValue>14)
-    setTimeout(()=>{btns.forEach((element) => {element.style.display='block';});}, 5000); //Displaying buttons.
-    setTimeout(()=>{if(checkValue(pCards)<15){btns[1].style.display='none';}},5000);
-    //test
-}
-
-//Hit and Stand Buttons:
-function hit(){
-    dealAndShow('player',pCCount,0);
-    if(pCCount === 5){
-        hitBtn.style = 'disable';
-    }
-    if(checkValue(pCards)>14 || pCCount === 5){
-        standBtn.style.display='block';
+    //Handles adding the card objects to the deck.
+    cardPopulator(number, type) {
+        deck[this.dIndex] = {
+            cNumber: number,
+            cType: deckT[type],
+            cImg: `deck/${number}_of_${deckT[type]}.png`
+        };
+        this.dIndex++;
     }
 }
-function stand(){
-    //Comp will stand when it's (15,16,17) or more.
-    let compChoice = Math.floor(Math.random()*3)+15;
-    while(checkValue(cCards)<compChoice && cCCount !== 5){
-        dealAndShow('comp',cCCount,0);
-    }
-    //Showing Comp's Cards:
-    let i = 0;
-    while(i<cCards.length){
-        cCardsDisplay[i].src = cCards[i].cImg;
-        i++;
-    }
-    setTimeout(()=>result(), 3000);
-}
-function result(){
-    //Makes sure if A-9-K is not 29 but 20.
-    threeCardFlag = false;
-    playerValue = checkValue(pCards);
-    if (threeCardFlag === true && pCCount===3 && playerValue > 21){
-        playerValue -= 9;
-    }
+/*      -----------------------------------------------------    */
 
-    threeCardFlag = false;
-    compValue = checkValue(cCards);
-    if (threeCardFlag === true && cCCount===3 && compValue > 21){
-       compValue -= 9;
+// 2.   Dealing Cards
+class Deal {
+    constructor() {
+        this.turn;
+        this.time;
+        this.delay;
     }
+    dealAndShow(turn, time, delay) {
+        /*  turn:'player' or 'comp'. 
+            time: total cards for that receiver. 
+            delay: yes(1) or no(0).                */
+        this.turn = turn;
+        this.time = time;
+        this.delay = delay;
+        console.log(this.turn, this.time, this.delay);
 
-    console.log("player: ", playerValue);
-    console.log("computer:", compValue);
-
-    //Conditions:
-    if(cCCount ===5 && compValue < 22){
-        compWin();
-    }else if(pCCount === 5 && playerValue < 22){
-        playerWin();
-    }else if(playerValue>21 && compValue < 22){
-        compWin();
-    }else if(compValue >21 && playerValue<22){
-        playerWin();
-    }else if(playerValue>compValue){
-        playerWin();
-    }else if(compValue>playerValue){
-        compWin();
-    }else{
-        draw();
+        //  Deals the cards and shows them on the screen. On 1 sec intervals.
+        this.deal();
+        if (this.turn === 'player') {
+            pCardsDisplay[this.time].src = pCards[this.time].cImg;
+            setTimeout(() => { pCardsDisplay[this.time].style.display = 'block'; }, (3 ** this.time) * 1000 * this.delay);
+        } else if (this.turn === 'comp') {
+            cCardsDisplay[this.time].src = 'cardBack01.png'; // Comp's cards will only be revealed at the end of the game.
+            setTimeout(() => { cCardsDisplay[this.time].style.display = 'block'; }, (2 ** this.time) * 2000 * this.delay);
+        }
+    }
+    deal() {
+        // Deals a random card (add into one of the cardArrays) and removes that card from the deck.
+        let n = Math.floor(Math.random() * (deck.length));
+        if (this.turn === 'player') {
+            pCards[pCCount] = deck[n];
+            pCCount++;
+        } else if (this.turn === 'comp') {
+            cCards[cCCount] = deck[n];
+            cCCount++;
+        }
+        deck.splice(n, 1);
     }
 }
 
-//Win,Lose,Draw
-function playerWin(){
-    document.querySelector('.win').style.display='block';
-    gamePg.style.display='none';
-    cash+=bet*2;
-    cashTxt.textContent = cash;
-}
-function compWin(){
-    document.querySelector('.lose').style.display='block';
-    gamePg.style.display='none';
-}
-function draw(){
-    document.querySelector('.draw').style.display='block';
-    gamePg.style.display='none';
-    cash+=bet;
-    cashTxt.textContent = cash;
+/*      -----------------------------------------------------    */
+
+// 3.  Object Creator and Value Checker Functions
+function createObj(){
+    new Deck();
+    dealingCards1 = new Deal();
+    dealingCards2 = new Deal();
+    dealingCards3 = new Deal();
+    dealingCards4 = new Deal();
+    dealingCards5 = new Deal();
+    dealObj = [dealingCards3, dealingCards4, dealingCards5];
 }
 
-function dealAndShow(turn,time,delay){
-    //deals the cards and shows them on the screen. On 1 sec intervals.
-    //turn:'player' or 'comp'. time: total cards for that receiver. delay: yes or no.
-    deal(turn);
-    if(turn === 'player'){
-        pCardsDisplay[time].src = pCards[time].cImg;
-        setTimeout(()=>{pCardsDisplay[time].style.display='block';},(3**time)*1000*delay);
-    }else if(turn === 'comp'){
-        cCardsDisplay[time].src = 'cardBack01.png';
-        setTimeout(()=>{cCardsDisplay[time].style.display='block';},(2**time)*2000*delay);
-    }
-}
-
-//Dealing Cards
-function deal(turn){
-    //Didn't know how to delete an Array Element at the moment.
-    let n = Math.floor(Math.random()*52);
-    while(deck[n] === null){
-        n = Math.floor(Math.random()*52);
-    }
-    if(turn === 'player'){
-        pCards[pCCount] = deck[n];
-        pCCount++;
-    }else if(turn==='comp'){
-        cCards[cCCount] = deck[n];
-        cCCount++;
-    }
-    deck[n] = null;
-}
-
-//Checking Values
-function checkValue(cArray){
+function checkValue(cArray) {
     let cValue = 0;
     let arrLen = cArray.length;
     // return cArray[0].cNumber;
-    for(let i = 0; i<arrLen; i++){
-        if(cArray[i].cNumber===1){
-            if(arrLen === 2){
+    for (let i = 0; i < arrLen; i++) {
+        if (cArray[i].cNumber === 1) {
+            if (arrLen === 2) {
                 cValue += 11;
-            } else if(arrLen === 3){
+            } else if (arrLen === 3) {
                 cValue += 10;
                 threeCardFlag = true;
-            } else{
+            } else {
                 cValue += 1;
             }
-        } else if(cArray[i].cNumber >= 10){
+        } else if (cArray[i].cNumber >= 10) {
             cValue += 10;
         } else {
             cValue += cArray[i].cNumber;
         }
     }
     return cValue;
+}
+/*      -----------------------------------------------------    */
+
+// 4. Dealing With The Result
+class Result{
+    constructor(){
+        this.result();
+    }
+    result() {
+        // Make sure that A-9-K isn't 29.
+        threeCardFlag = false;
+        playerValue = checkValue(pCards);
+        if (threeCardFlag === true && pCCount === 3 && playerValue > 21) {
+            playerValue -= 9;
+        }
+        threeCardFlag = false;
+        compValue = checkValue(cCards);
+        if (threeCardFlag === true && cCCount === 3 && compValue > 21) {
+            compValue -= 9;
+        }
+    
+        // Conditions:
+        if (pCCount === 5 && playerValue < 22) {
+            this.playerWin();
+        } else if (compValue < 22 && (cCCount === 5 || playerValue > 21 || compValue > playerValue)) {
+            this.compWin();
+        } else if (playerValue < 22 && (compValue > 22 || playerValue > compValue)) {
+            this.playerWin();
+        } else {
+            this.draw();
+        }
+        resultPg.style.display = 'block';
+        gamePg.style.display = 'none';
+    }
+    // Win,Lose,Draw Animations
+    playerWin(){
+        document.querySelector('.win').style.display = 'block';
+        cash += bet * 2;
+        cashTxt.textContent = cash;
+    }
+    compWin() {
+        document.querySelector('.lose').style.display = 'block';
+    }
+    draw() {
+        document.querySelector('.draw').style.display = 'block';
+        cash += bet;
+        cashTxt.textContent = cash;
+    }
+}
+
+// 5. Resetter Function
+function reset(){
+    // Resets the necessary variables.
+    // (2.2.1.)   Arrays For The Deck
+    deck = [];
+    // (2.2.2)    Player's Hand
+    pCards = [];
+    pCCount = 0;
+    playerValue = 0;
+    // (2.2.3)   Comp's Hand
+    cCards = [];
+    cCCount = 0;
+    compValue = 0;
+    // (3.)   Other Misc. Variables
+    threeCardFlag;          
+    standBtnFlag = false;  
+    dealObj = [];   
+
+    //Recreates data.
+    createObj();
+
+    // Refreshes the game page.
+    resultPg.style.display = 'none';
+    gamePg.style.display = 'block';
+    pCardsDisplay.forEach(e=>e.style.display='none');
+    cCardsDisplay.forEach(e=>e.style.display='none');
+    betContainer.style.display = 'flex';
+
+}
+
+/*      -----------------------------------------------------    */
+/*      -----------------------------------------------------    */
+
+/* SECTION C. Starting The Game */
+
+// 1. Game Flow UI/UX (ain't so sure about the terminology, but you get the point).
+// 1.1. Starting
+function start() {
+    welcomePg.style.display = 'none';
+    gamePg.style.display = 'block';
+    createObj();
+}
+/*      -----------------------------------------------------    */
+
+// 1.2. Betting
+function showVal(val) {
+    betValue.innerHTML = betAmt.value;
+}
+function confirmBet() {
+    bet = (Number)(betAmt.value);
+    cash -= bet;
+
+    betContainer.style.display = 'none';
+    pot.textContent = bet * 2; //Because the pot holds player's bet plus the comp"s.
+    cashTxt.textContent = cash;
+
+    dealInitialCards();
+}
+/*      -----------------------------------------------------    */
+
+// 1.3      Dealing Cards
+// 1.3.1.   Changing The Header
+function changeHeader(){
+    header.innerHTML = "<h2> GET READY ... </h2>";
+    setTimeout(() => {
+        header.style.display = 'none';
+    }, 2000);
+}
+
+// 1.3.2.   Initial Dealing (2 Cards Each)
+function dealInitialCards() {
+    changeHeader();
+    // Dealing cards (2 cards each).
+    // For reasons unknown to me at this time, it doesn't work with only one object (images replacing each other).
+    dealingCards1.dealAndShow('player', pCCount, 1);
+    dealingCards1.dealAndShow('comp', cCCount, 1);
+    dealingCards2.dealAndShow('player', pCCount, 1);
+    dealingCards2.dealAndShow('comp', cCCount, 1);
+
+    //Displaying Buttons. (StandBtn will display only when playerValue>14)
+    setTimeout(() => { btns[0].style.display = 'block'; }, 5000); // HIT BTN
+    setTimeout(() => { if (checkValue(pCards) > 14) { btns[1].style.display = 'block'; standBtnFlag = true; } }, 5000); // STAND BTN
+}
+
+//  1.3.3.   Hitting & Standing
+function hit() {
+    dealingCards3.dealAndShow('player', pCCount, 0);
+    if (pCCount === 5) {
+        hitBtn.style = 'disable';
+    }
+    if ((standBtnFlag === false && checkValue(pCards) > 14) || pCCount === 5) {
+        standBtn.style.display = 'block';
+        standBtnFlag = true;
+    }
+}
+
+async function stand() {
+    //Disables Btns
+    btns.forEach(e => e.style.display = 'none');
+
+    //Comp will stand when it's (15,16,17) or more.
+    let compChoice = Math.floor(Math.random() * 3) + 15;
+    let dealObjIndex = 0;
+    while (checkValue(cCards) < compChoice && cCCount !== 5) {
+        dealObj[dealObjIndex].dealAndShow('comp', cCCount, 0);
+        dealObjIndex++;
+    }
+
+    //Showing Comp's Cards:
+    function sleep(ms) {
+        //This helps setting up the timer.
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    let i = 0;
+    while (i < cCards.length) {
+        await sleep(1000);  //Time between revealing each card.
+        cCardsDisplay[i].src = cCards[i].cImg;
+        i++;
+    }
+    setTimeout(() => new Result(), 2000);
 }
