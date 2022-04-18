@@ -6,13 +6,15 @@ NOTES
         Section A for variable declaration.
         Section B for helper functions and classes.
         Section C for what the user is expected to go through.
-    - Timeline:
+    - Versions and Timeline:
         v1.0:   Started on 2022 Apr 15 11:00. Finished a working version at 21:45, after 5~7 hours of coding.
                 Code is very much not clean and may also contain bugs, but the game works.
                 Hope to clean the code and add more features later.
         v1.1:   Cleaning the code: started on 2022 Apr 17 21:30. Finished with a much cleaner (I guess) code at 0:05.
         v1.2:   Added the reset feature. Took around 30 minutes.
-    
+        v2.0:   Worked on adding a LogIn system with user Profiles. Started using firebase-firestore.
+                Players can now create their own accounts with name, password, W-L-D score and cash.
+                There's also a "guest mode", of course. (2022 Apr 18 22:45 - 0:05). 
 */
 
 /* SECTION A. Declaring Variables */
@@ -23,6 +25,8 @@ const welcomePg = document.querySelector('.welcomePage');
 const gamePg = document.querySelector('.gamePage');
 const resultPg = document.querySelector('.resultPage');
 const header = document.querySelector('.headerAboveCards');
+const loginForm = document.querySelector('.loginForm');
+const loginMsg = document.querySelector('.loginForm h3');
 
 // 1.2  Betting
 const betAmt = document.querySelector('#betBar');
@@ -87,6 +91,7 @@ let dealingCards2;
 let dealingCards3; 
 let dealingCards4; 
 let dealingCards5;
+let username, userpassword, userID, userRecord, userCash;   //User Profile
 /*      -----------------------------------------------------    */
 /*      -----------------------------------------------------    */
 
@@ -278,8 +283,71 @@ function reset(){
 
 /* SECTION C. Starting The Game */
 
-// 1. Game Flow UI/UX (ain't so sure about the terminology, but you get the point).
-// 1.1. Starting
+// 1.        Game Flow UI/UX (ain't so sure about the terminology, but you get the point).
+// 1.1.      Starting
+// 1.1.1.    Logging In
+function formAnimation(){
+    // In case the user doesn't click on the buttons.
+    loginForm.style.border = '2px solid #333';
+    setTimeout(() => {
+        loginForm.style.border = '2px solid #D69215'
+    }, 500);
+}
+
+function getUserInfo(){
+    // So that both sign in and sign up can use these.
+    username = document.querySelector('#name').value;
+    userpassword = document.querySelector('#password').value;
+}
+async function  login(){
+    getUserInfo();
+    let flag = false; //Whether or not the user exists in the database.
+    // Search the database for user's profile.
+    await db.collection('userInfo').get()
+        .then((response)=>{response.docs.forEach(
+            (doc) => {
+                if(doc.data().name === username && doc.data().password === userpassword){
+                    document.querySelector('#greetName').textContent = username;
+                    cash = doc.data().cash;
+                    userRecord = [doc.data().win, doc.data().loss, doc.data().draw];
+                    flag = true;
+                    start();
+                }
+            }
+        )})
+        .catch(err=>console.log(err));
+    
+    // For when the user profile is not found.
+    if(!flag){
+        document.querySelector('.startBtn').textContent = "Hmm.. account not found.";
+        formAnimation();
+        setTimeout(() => {
+            location.reload();
+        }, 2000); 
+    }    
+}
+
+function createAcc(){
+    // Displaying the createAcc form.
+    loginMsg.textContent = "Great. Please fill in:";
+    document.querySelector('#loginBtn').style.display = 'none';
+    document.querySelector('#createBtn').style.display = 'none';
+    document.querySelector('#confirmBtn').style.display = 'block';
+}
+
+function addAcc(){
+    // Actually adding the account to the database.
+    getUserInfo();
+    let newUser = {cash: 100, draw: 0, name: username, password: userpassword, loss: 0, win: 0};
+    // When the user clicked submit.
+    db.collection('userInfo').add(newUser)
+        .then(()=>{
+            loginMsg.textContent = "Successfully added! Please log in again.";
+            setTimeout(()=>{location.reload();}, 2000);
+        })
+}
+
+//  1.1.2.  Starting The Game
 function start() {
     welcomePg.style.display = 'none';
     gamePg.style.display = 'block';

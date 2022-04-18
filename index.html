@@ -14,16 +14,32 @@
         <p class="title">BLACKJACK</p>
         <P>"The greatest risk is not taking one."</P>
     </div>
-    <div id="setting">
-        <div> <span id="cashText">100</span> mil.</div>
-        <img src="dollar.png" width="30px"/>
-    </div>
+    
     <div class="welcomePage">
-        <button class="startBtn" onclick="start()">
-            START
+        <button class="startBtn" onclick="formAnimation()">
+            WELCOME
         </button>
+        <div class="loginForm">
+            <h3> Who are you, young traveller? </h3>
+            <form>
+            <input type="text" id="name" placeholder="Name"/>
+            <input type="password" id="password" placeholder="Password"/>
+            </form>
+            <div class="loginBtns">
+                <button id="loginBtn" onclick="login()">Sign In</button>
+                <button id="createBtn" onclick="createAcc()">Sign Up</button>
+                <button id="confirmBtn" onclick="addAcc()">Submit</button>
+            </div>
+            <div class="guestBtns">
+                <button id="guestBtn" onclick="start()">Consider me a "Guest"</button>
+            </div>
+        </div>
     </div>
     <div class="gamePage">
+        <div id="cash">
+            <div> <span id="cashText">100</span> mil.</div>
+            <img src="dollar.png" width="30px"/>
+        </div>
         <div class="compCards">
             <img src="" alt="" id="comp1"/>
             <img src="" alt="" id="comp2"/>
@@ -32,8 +48,8 @@
             <img src="" alt="" id="comp5"/>
         </div>
         <div class="headerAboveCards">
-            <h2>Welcome!</h2>
-            <p>Place your bet.</p>
+            <h2>Hello <span id="greetName">Guest</span>!</h2>
+            <p>Please place your bet.</p>
         </div>
         <img id="deckOfCards" src="cardBack01.png" width="60px"/>
         <div id="potContainer">
@@ -86,8 +102,22 @@
         </div>
     </div>
         
-
-    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-firestore.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyC_vnPbQufSqTAueKFWoLUqi_ODRUNUmOk",
+            authDomain: "blackjackdata-sbac.firebaseapp.com",
+            projectId: "blackjackdata-sbac",
+            storageBucket: "blackjackdata-sbac.appspot.com",
+            messagingSenderId: "197959944175",
+            appId: "1:197959944175:web:2bec95f985755960ac181a"
+            };
+        firebase.initializeApp(config);
+        const db = firebase.firestore();  
+    </script>
 
 </body>
 </html>
