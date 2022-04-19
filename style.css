@@ -188,7 +188,14 @@ img{
 }
 
 /*WinLoseDraw*/
-.result{
+
+/* .result{
+    display:none;
+    text-align: center;
+    margin-top:100px;
+} */
+
+.win, .lose, .draw{
     display:none;
     text-align: center;
     margin-top:100px;

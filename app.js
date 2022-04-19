@@ -15,13 +15,13 @@ NOTES
         v2.0:   Worked on adding a LogIn system with user Profiles. Started using firebase-firestore.
                 Players can now create their own accounts with name, password, W-L-D score and cash.
                 There's also a "guest mode", of course. (2022 Apr 18 22:45 - 0:05). 
-        v2.1:   Adding the displaying mechanism. (2022 Apr 19 14:10 - 15:20).
+        v2.1:   Adding the displaying mechanism. (2022 Apr 19 14:10 - 16:20).
 */
 
 /* SECTION A. Declaring Variables */
 
 // 1    Document Objects & Related Variables
-// 1.1  Pages
+// 1.1  Pages & Display Objects
 const welcomePg = document.querySelector('.welcomePage');
 const gamePg = document.querySelector('.gamePage');
 const resultPg = document.querySelector('.resultPage');
@@ -31,7 +31,15 @@ const loginMsg = document.querySelector('.loginForm h3');
 
 const winN = document.querySelector('#winN');
 const loseN = document.querySelector('#loseN');
-const drawN = document.querySelector('drawN');
+const drawN = document.querySelector('#drawN');
+const winD = document.querySelector('.win');
+const loseD = document.querySelector('.lose');
+const drawD = document.querySelector('.draw');
+let win = 0; // Win Lose Draw numbers.
+let lose = 0;
+let draw = 0; 
+let resultD; // Result to be displayed.
+
 // 1.2  Betting
 const betAmt = document.querySelector('#betBar');
 const betContainer = document.querySelector('.betContainer');
@@ -90,11 +98,8 @@ let compValue = 0;
 let threeCardFlag;          // To help rule out the possibility of ${"A-9-K"} counting wrong.
 let standBtnFlag = false;   // To help reduce work for checking whether or not to display StandBtn.
 let dealObj = [];           // To save Deal objects (well, I don't know how to work with a single instance yet, so...)
-let dealingCards1; // Same as above.
-let dealingCards2; 
-let dealingCards3; 
-let dealingCards4; 
-let dealingCards5;
+let dealingCards1, dealingCards2, dealingCards3, dealingCards4, dealingCards5; // Same as above.
+
 let userRecord = [0,0,0];
 let userCash = 100;
 let username, userpassword, userID, userIndex;   //User Profile
@@ -144,7 +149,6 @@ class Deal {
         this.turn = turn;
         this.time = time;
         this.delay = delay;
-        console.log(this.turn, this.time, this.delay);
 
         //  Deals the cards and shows them on the screen. On 1 sec intervals.
         this.deal();
@@ -224,35 +228,53 @@ class Result{
         if (threeCardFlag === true && cCCount === 3 && compValue > 21) {
             compValue -= 9;
         }
-    
+        console.log("pCCount,cCCount,playerValue,computerValue",pCCount,cCCount,playerValue,compValue);
         // Conditions:
         if (pCCount === 5 && playerValue < 22) {
+            console.log("playerWins");
+            resultD = winD;
             this.playerWin();
         } else if (compValue < 22 && (cCCount === 5 || playerValue > 21 || compValue > playerValue)) {
+            console.log("computerWins");
+            resultD = loseD;
             this.compWin();
-        } else if (playerValue < 22 && (compValue > 22 || playerValue > compValue)) {
+        } else if (playerValue < 22 && (compValue > 21 || playerValue > compValue)) {
+            console.log("playerWins");
+            resultD = drawD;
             this.playerWin();
         } else {
+            console.log("draw");
             this.draw();
         }
-        //resultPg.style.display = 'block';
         gamePg.style.display = 'none';
+        resultD.style.display = 'block';
+        saveData();
     }
     // Win,Lose,Draw Animations
     playerWin(){
-        document.querySelector('.win').style.display = 'block';
         cash += bet * 2;
         cashTxt.textContent = cash;
-
+        win++;
+        winN.textContent = win;
+        resultD = winD;
     }
-    compWin() {
-        document.querySelector('.lose').style.display = 'block';
+    compWin(){
+        lose++;
+        loseN.textContent = lose;
+        resultD = loseD;
     }
-    draw() {
-        document.querySelector('.draw').style.display = 'block';
+    draw(){
         cash += bet;
         cashTxt.textContent = cash;
+        draw++;
+        drawN.textContent = draw;
+        resultD = drawD;
     }
+}
+
+function saveData(){
+    db.collection("userInfo").get()
+        .then((response) => {response.docs[userIndex].data().userRecord = [win, lose, draw]});
 }
 
 // 5. Resetter Function
@@ -277,12 +299,11 @@ function reset(){
     createObj();
 
     // Refreshes the game page.
-    resultPg.style.display = 'none';
+    resultD.style.display = 'none';
     gamePg.style.display = 'block';
     pCardsDisplay.forEach(e=>e.style.display='none');
     cCardsDisplay.forEach(e=>e.style.display='none');
     betContainer.style.display = 'flex';
-
 }
 
 /*      -----------------------------------------------------    */
@@ -312,14 +333,13 @@ async function  login(){
     let flag = false; // Whether or not the user exists in the database.
     // Search the database for user's profile.
     await db.collection('userInfo').get()
-        .then((response)=>{console.log(response); response.docs.forEach(
+        .then((response)=>{response.docs.forEach(
             (doc) => {
                 if(doc.data().name === username && doc.data().password === userpassword){
                     document.querySelector('#greetName').textContent = username;
                     cash = doc.data().cash;
                     userRecord = [doc.data().win, doc.data().loss, doc.data().draw];
                     userIndex = index;
-                    console.log(userIndex);
                     flag = true;
                     start();
                 }
