@@ -12,7 +12,7 @@
     <!-- Notes in the app.js file -->
     <div class="header">
         <p class="title">BLACKJACK</p>
-        <P>"The greatest risk is not taking one."</P>
+        <P class="titleSub">"The greatest risk is not taking one."</P>
     </div>
     
     <div class="welcomePage">
@@ -36,10 +36,34 @@
         </div>
     </div>
     <div class="gamePage">
-        <div id="cash">
-            <div> <span id="cashText">100</span> mil.</div>
-            <img src="dollar.png" width="30px"/>
+        <div class="gameHeader">
+            <div id="playerInfo">
+                <img src="icons/user.png" width="20px"/>
+                <div> <span id="nameText">Guest</span></div>
+            </div>
+            <div id="cash">
+                <img src="icons/casino-chip.png" width="20px"/>
+                <div> <span id="cashText">100</span> mil.</div>
+            </div>
         </div>
+        <div class="footerWrapper">
+            <!-- To center the gameFooter using flex. -->
+        <div class="gameFooter">
+            <div id="winDisplay">
+                <img src="winSign.png" height="30px"/>
+                <div> <span id="winN">0</span></div>
+            </div>
+            <div id="loseDisplay">
+                <img src="loseSign.png" height="30px"/>
+                <div> <span id="loseN">0</span></div>
+            </div>
+            <div id="drawDisplay">
+                <img src="drawSign.png" height="30px"/>
+                <div> <span id="drawN">0</span></div>
+            </div>
+        </div>
+        </div>  
+        
         <div class="compCards">
             <img src="" alt="" id="comp1"/>
             <img src="" alt="" id="comp2"/>

@@ -15,6 +15,7 @@ NOTES
         v2.0:   Worked on adding a LogIn system with user Profiles. Started using firebase-firestore.
                 Players can now create their own accounts with name, password, W-L-D score and cash.
                 There's also a "guest mode", of course. (2022 Apr 18 22:45 - 0:05). 
+        v2.1:   Adding the displaying mechanism. (2022 Apr 19 14:10 - 15:20).
 */
 
 /* SECTION A. Declaring Variables */
@@ -28,6 +29,9 @@ const header = document.querySelector('.headerAboveCards');
 const loginForm = document.querySelector('.loginForm');
 const loginMsg = document.querySelector('.loginForm h3');
 
+const winN = document.querySelector('#winN');
+const loseN = document.querySelector('#loseN');
+const drawN = document.querySelector('drawN');
 // 1.2  Betting
 const betAmt = document.querySelector('#betBar');
 const betContainer = document.querySelector('.betContainer');
@@ -91,7 +95,9 @@ let dealingCards2;
 let dealingCards3; 
 let dealingCards4; 
 let dealingCards5;
-let username, userpassword, userID, userRecord, userCash;   //User Profile
+let userRecord = [0,0,0];
+let userCash = 100;
+let username, userpassword, userID, userIndex;   //User Profile
 /*      -----------------------------------------------------    */
 /*      -----------------------------------------------------    */
 
@@ -229,7 +235,7 @@ class Result{
         } else {
             this.draw();
         }
-        resultPg.style.display = 'block';
+        //resultPg.style.display = 'block';
         gamePg.style.display = 'none';
     }
     // Win,Lose,Draw Animations
@@ -237,6 +243,7 @@ class Result{
         document.querySelector('.win').style.display = 'block';
         cash += bet * 2;
         cashTxt.textContent = cash;
+
     }
     compWin() {
         document.querySelector('.lose').style.display = 'block';
@@ -301,18 +308,22 @@ function getUserInfo(){
 }
 async function  login(){
     getUserInfo();
-    let flag = false; //Whether or not the user exists in the database.
+    let index = 0; // To help with getting userIndex.
+    let flag = false; // Whether or not the user exists in the database.
     // Search the database for user's profile.
     await db.collection('userInfo').get()
-        .then((response)=>{response.docs.forEach(
+        .then((response)=>{console.log(response); response.docs.forEach(
             (doc) => {
                 if(doc.data().name === username && doc.data().password === userpassword){
                     document.querySelector('#greetName').textContent = username;
                     cash = doc.data().cash;
                     userRecord = [doc.data().win, doc.data().loss, doc.data().draw];
+                    userIndex = index;
+                    console.log(userIndex);
                     flag = true;
                     start();
                 }
+                index++;
             }
         )})
         .catch(err=>console.log(err));
@@ -351,6 +362,10 @@ function addAcc(){
 function start() {
     welcomePg.style.display = 'none';
     gamePg.style.display = 'block';
+    document.querySelector('.titleSub').style.display = 'none';
+    winN.textContent = userRecord[0];
+    loseN.textContent = userRecord[1];
+    drawN.textContent = userRecord[2];
     createObj();
 }
 /*      -----------------------------------------------------    */
