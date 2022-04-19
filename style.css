@@ -21,16 +21,6 @@ img{
 .title{
     font-size:3em;
 }
-.gameHeader{
-    display:flex;
-    justify-content: start;
-    gap:0px;
-    margin-bottom:50px;
-}
-.footerWrapper{
-    display: flex;
-    justify-content: center;
-}
 
 .gameFooter{
     position:absolute;
@@ -62,17 +52,29 @@ img{
 /*FOL: place the button at the center of the whole screen*/
 .welcomePage{
     width:100%;
-    padding-top:60px;
+    padding-top:30px;
     text-align: center;
 }
-.startBtn{
-    padding: 0px 30px 0px 30px;
-    height:50px;
-    border:none;
-    background-color: #D69215;
+.aboutBtn{
+    padding: 10px;
+    border:1px solid #D69215;
+    background-color: white;
     color:beige;
-    font-size: 30px;
-    box-shadow: 1px 1px 5px #111;
+    font-size: 20px;
+    box-shadow: 1px 1px 5px #D69215;
+    margin-top: 20px;
+    position: absolute;
+    bottom:20px;
+    right:20px;
+}
+.aboutBtn:hover{
+    cursor: pointer;
+}
+.disclaimer{
+    padding:5px 25px;
+    text-align: justify;
+    font-size: 0.8em;
+    opacity: 80%;
 }
 .loginForm{
     background-color: #e1e1e1;
@@ -80,7 +82,7 @@ img{
     border-radius: 10px;
     max-width: 300px;
     margin:auto;
-    margin-top:50px;
+    margin-top:0px;
     padding:15px;
 }
 .loginForm form{
@@ -111,6 +113,17 @@ img{
     display:none;
 }
 /*2.Game Page*/
+.gameHeader{
+    display:flex;
+    justify-content: start;
+    gap:0px;
+    margin-bottom:10px;
+}
+.footerWrapper{
+    display: flex;
+    justify-content: center;
+}
+
 .gamePage{
     display:block;
     text-align: center;

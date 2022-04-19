@@ -15,7 +15,8 @@ NOTES
         v2.0:   Worked on adding a LogIn system with user Profiles. Started using firebase-firestore.
                 Players can now create their own accounts with name, password, W-L-D score and cash.
                 There's also a "guest mode", of course. (2022 Apr 18 22:45 - 0:05). 
-        v2.1:   Adding the displaying mechanism. (2022 Apr 19 14:10 - 16:20).
+        v2.1:   Adding the displaying mechanism. (2022 Apr 19 14:10 - 16:20). Also fixed some bugs, added a disclaimer
+                and put a link to my github account. (2022 Apr 19 22:30 - 0:00).
 */
 
 /* SECTION A. Declaring Variables */
